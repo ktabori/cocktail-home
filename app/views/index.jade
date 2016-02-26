@@ -1,0 +1,156 @@
+extends layout
+
+-var page = 'Home'
+
+
+mixin imageItem(link, img, description, likes)
+  a(href=link, target='blank')
+    .col-sm-4.mb30
+      img.background-image(alt=likes + ' Likes', src=img)
+
+mixin twitterItem(link, avatar, username, userscreen, tweet)  
+  .col-sm-4.twitter-item
+    p.tweet!=twitterText(tweet)
+
+mixin vimeoItem(id)
+  .col-md-6.col-sm-6.mb-xs-30.mb24
+    .embed-video-container.embed-responsive.embed-responsive-16by9
+      iframe.embed-responsive-item(src="http://player.vimeo.com/video/" + id + "?badge=0&title=0&byline=0&title=0")
+
+mixin pxElem(url, link, title)
+  a(href=link, target='blank')
+    .col-sm-3.mb30
+      img.background-image(alt="500px image", src=url)
+
+mixin dribbbleItem(link, imgUrl, title, views_count, likes_count)
+  .col-md-6.col-sm-6.masonry-item.project(data-filter="People")
+    .image-tile.inner-title.hover-reveal.text-center
+      a(href=link)
+        img(alt="Pic", src=imgUrl)
+        .title
+          h5.uppercase.mb0= title
+          span= views_count + ' views / ' + likes_count + ' likes'
+
+block content
+  section.fullscreen.image-bg.parallax.background-multiply
+    .background-image-holder
+      img.background-image(alt="image", src="img/header_img.jpg")
+    .container.v-align-transform.text-center
+      .row
+        .col-md-8.col-sm-8.col-md-push-2.col-sm-push-2
+          h1.thin.mb32 Krisztian Tabori
+          h5.uppercase.mb32 I'm a startup minded creative developer from Copenhagen. Partner + Head of Design at Dixa, previously at Danish Broadcasting Corporation.
+    .align-bottom.text-center
+      ul.list-inline.social-list.mb24
+        li
+          a(href="https://twitter.com/ktabori")
+            i.fa.fa-twitter
+        li
+          a(href="https://www.facebook.com/krtabori")
+            i.fa.fa-facebook
+        li
+          a(href="https://dk.linkedin.com/in/ktabori")
+            i.fa.fa-linkedin
+        li
+          a(href="https://vimeo.com/ktabori")
+            i.fa.fa-vimeo
+        li
+          a(href="https://instagram.com/ktabori")
+            i.fa.fa-instagram
+        li
+          a(href="https://dribbble.com/ktabori")
+            i.fa.fa-dribbble
+        li
+          a(href="https://500px.com/ktabori")
+            i.fa.fa-500px
+
+  if Data.twitterFeed
+    section.bg-secondary(style="padding-top:80px; padding-bottom: 30px;")
+      .container.text-center
+        .row
+          .col-md-12
+            .header(style="margin-bottom: 40px; height: 50px;")
+              a(href="http://twitter.com/ktabori", target='blank')
+                .pull-left
+                  h4
+                    i.ti-twitter-alt.icon.icon-sm
+                .pull-left.ml10
+                  h4 Twitter
+        .row
+          each e, i in Data.twitterFeed
+            if i < 3
+              +twitterItem('http://twitter.com/' + e.user.screen_name, e.profile_image_url_https, e.user.name, e.user.screen_name, e.text)
+  
+  if Data.dribbbleShots
+    section.projects.bg-secondary(style="padding-top:30px; padding-bottom: 30px;")
+      .container
+        .row
+          .col-md-12
+            .header(style="margin-bottom: 40px; height: 50px;")
+              a(href="https://dribbble.com/ktabori", target='blank')
+                .pull-left
+                  h4
+                    i.fa.fa-dribbble.icon.icon-m
+                .pull-left.ml10
+                  h4 Dribbble
+                .pull-right
+                  h4 
+        .row.masonry.masonryFlyIn
+          each d, i in Data.dribbbleShots
+            if i < 9
+              +dribbbleItem(d.html_url, d.images.hidpi, d.title, d.views_count, d.likes_count)
+  
+  if Data.pxPhotos.photos
+    section.bg-secondary(style="padding-top:30px; padding-bottom: 30px;")
+      .container
+        .row
+          .col-md-12
+            .header(style="margin-bottom: 40px; height: 50px;")
+              a(href="https://500px.com/ktabori", target='blank')
+                .pull-left
+                  h4
+                    i.ti-camera.icon.icon-sm
+                .pull-left.ml10
+                  h4 500px
+          .col-md-12
+            .instagram-grid
+              each p, i in Data.pxPhotos.photos
+                if i < 12
+                  +pxElem(p.image_url, 'http://500px.com' + p.url)
+
+  if Data.vimeoAlbum.data
+    section.bg-secondary(style="padding-top:30px; padding-bottom: 30px;")
+      .container.text-center
+        .row
+          .col-md-12
+            .header(style="margin-bottom: 40px; height: 50px;")
+              a(href="https://vimeo.com/ktabori", target='blank')
+                .pull-left
+                  h4
+                    i.ti-vimeo.icon.icon-sm
+                .pull-left.ml10
+                  h4 Vimeo
+        .row
+          each v, i in Data.vimeoAlbum.data
+            +vimeoItem(v.uri.split('/')[2])
+
+  if Data.instagramFeed.data
+    section.bg-secondary.instagram(style="padding-top:30px; padding-bottom: 30px;")
+      .container.text-center
+        .row
+          .col-md-12
+            .header(style="margin-bottom: 40px; height: 50px;")
+              a(href="https://instagram.com/ktabori", target='blank')
+                .pull-left
+                  h4
+                    i.ti-instagram.icon.icon-sm
+                .pull-left.ml10
+                  h4 Instagram
+                .pull-right
+                  h4 @KTABORI
+          .col-md-12
+            .instagram-grid
+              each e, i in Data.instagramFeed.data
+                if i < 9
+                  +imageItem(e.link, e.images.standard_resolution.url, e.caption, e.likes.count)
+  
